@@ -122,6 +122,7 @@ SSH tunnel or a TLS proxy for a remote Robot Client.
 | `gpt-6-astra` | `https://api.openai.com/v1` | Responses |
 | `grok-4.7` | `https://api.x.ai/v1` | Chat Completions |
 | `claude-opus-5-5` | `https://api.anthropic.com/v1` | Messages |
+| `gemini-4-hydrogen` | `https://generativelanguage.googleapis.com/v1beta/openai` | Chat Completions |
 
 `effort: low` is the default. Do not disable thinking for Opus 5.5. `ready`
 means the configured API client initialized, not that cloud weights were

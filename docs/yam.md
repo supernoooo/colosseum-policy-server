@@ -69,11 +69,12 @@ latency, motor operation or task success. See the
 [Client YAM guide](../../colosseum-client/docs/yam.md) for hardware configuration
 and shutdown behavior.
 
-## Inspect Agent: Grok, Opus and GPT
+## Inspect Agent: Grok, Opus, GPT and Gemini
 
 The Colosseum Inspect Agent adapter supports the same YAM Client with
-`grok-4.7`, `claude-opus-5-5`, and `gpt-6-astra` model identifiers. These reuse
-the existing Chat Completions, Anthropic Messages, and Responses transports
+`grok-4.7`, `claude-opus-5-5`, `gpt-6-astra` and `gemini-4-hydrogen` model
+identifiers. These reuse the existing Chat Completions, Anthropic Messages,
+Responses and (Google's OpenAI-compatible) Chat Completions transports
 respectively. This is adapter support; model availability, credentials and
 relay compatibility must be checked against your actual provider.
 

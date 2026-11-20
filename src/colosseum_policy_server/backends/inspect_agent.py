@@ -29,6 +29,7 @@ OFFICIAL_LLM_URLS = {
     'openai': 'https://api.openai.com/v1',
     'x-ai': 'https://api.x.ai/v1',
     'anthropic': 'https://api.anthropic.com/v1',
+    'google': 'https://generativelanguage.googleapis.com/v1beta/openai',
 }
 YAM_EEF_LABELS = tuple(f'{side}_{axis}' for side in ('left', 'right')
                        for axis in ('x', 'y', 'z', 'yaw', 'pitch', 'roll', 'gripper'))
@@ -88,7 +89,8 @@ class InspectAgentBackend:
         typed = model.model_type == "llm"
         providers = {"gpt-": ("openai", "OPENAI_API_KEY"),
                      "grok-": ("x-ai", "XAI_API_KEY"),
-                     "claude-": ("anthropic", "ANTHROPIC_API_KEY")}
+                     "claude-": ("anthropic", "ANTHROPIC_API_KEY"),
+                     "gemini-": ("google", "GEMINI_API_KEY")}
         if typed:
             provider, key_env, model_prefix = next(
                 ((value[0], value[1], prefix) for prefix, value in providers.items()
@@ -104,7 +106,7 @@ class InspectAgentBackend:
             identity = urlsplit(f"llm://{provider}/{model.name}")
         if model.url.startswith("https://huggingface.co/"):
             identity = urlsplit("llm://" + str(model.backend_options.get("agent_model", "")))
-        wires = {"openai": "responses", "x-ai": "chat", "anthropic": "messages"}
+        wires = {"openai": "responses", "x-ai": "chat", "anthropic": "messages", "google": "chat"}
         if identity.scheme != "llm" or identity.netloc not in wires or model.endpoint != "inprocess://inspect-agent":
             raise ValueError("inspect_agent requires an llm://provider/model identity")
         if self.control_mode != "eef_delta_pose":

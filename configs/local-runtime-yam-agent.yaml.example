@@ -69,3 +69,18 @@ models:
     endpoint: inprocess://inspect-agent
     backend_options:
       robot_type: yam
+  # Registered by the Router for YAM with the same fields as gpt-6-astra.
+  # Gemini uses Google's OpenAI-compatible Chat Completions API (GEMINI_API_KEY).
+  - name: gemini-4-hydrogen
+    model_type: llm
+    url: https://api.yhlxj.ai/v1
+    revision: rig-v1
+    action_space: joint_position
+    action_dim: 14
+    control_hz: 30
+    max_horizon: 150
+    endpoint: inprocess://inspect-agent
+    backend_options:
+      robot_type: yam
+      # Hydrogen thinking levels are low, medium, high and xhigh (default high).
+      effort: medium

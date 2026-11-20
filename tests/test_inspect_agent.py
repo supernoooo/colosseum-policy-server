@@ -19,7 +19,7 @@ from colosseum_policy_server.local_runtime import LocalPolicyRuntime, RuntimeCon
 
 
 def model(provider="x-ai", name="grok-4.7"):
-    return LocalModel.from_mapping(dict(name=name, model_type="llm", url={"openai":"https://api.openai.com/v1", "x-ai":"https://api.x.ai/v1", "anthropic":"https://api.anthropic.com/v1"}[provider],
+    return LocalModel.from_mapping(dict(name=name, model_type="llm", url={"openai":"https://api.openai.com/v1", "x-ai":"https://api.x.ai/v1", "anthropic":"https://api.anthropic.com/v1", "google":"https://generativelanguage.googleapis.com/v1beta/openai"}[provider],
         revision="rig-v1", endpoint="inprocess://inspect-agent", action_space="joint_position",
         action_dim=8, control_hz=15, max_horizon=2))
 
@@ -63,6 +63,7 @@ def factory(handler):
     ("openai", "gpt-6-astra", "responses", "/v1/responses"),
     ("x-ai", "grok-4.7", "chat", "/v1/chat/completions"),
     ("anthropic", "claude-opus-5-5", "messages", "/v1/messages"),
+    ("google", "gemini-4-hydrogen", "chat", "/v1beta/openai/chat/completions"),
 ])
 async def test_real_agent_provider_conversion_and_reset(tmp_path, provider, name, wire, path):
     requests = []
@@ -323,6 +324,7 @@ async def test_llm_rejects_wrong_so101_action_contract_before_creating_agent(tmp
     ('openai','gpt-6-astra','responses','/v1/responses'),
     ('x-ai','grok-4.7','chat','/v1/chat/completions'),
     ('anthropic','claude-opus-5-5','messages','/v1/messages'),
+    ('google','gemini-4-hydrogen','chat','/v1/chat/completions'),
 ])
 async def test_relay_endpoint_credentials_and_real_inspect(tmp_path, provider, name, wire, path):
     from colosseum_policy_server.backends.llm_transport import BearerTransport
@@ -403,8 +405,9 @@ async def test_observed_bounds_error_identifies_all_bad_dimensions(tmp_path, rob
     ('openai', 'gpt-6-astra', 'responses', '/v1/responses'),
     ('x-ai', 'grok-4.7', 'chat', '/v1/chat/completions'),
     ('anthropic', 'claude-opus-5-5', 'messages', '/v1/messages'),
+    ('google', 'gemini-4-hydrogen', 'chat', '/v1beta/openai/chat/completions'),
 ])
-async def test_yam_three_providers_through_runtime(tmp_path, provider, name, wire, path):
+async def test_yam_every_provider_through_runtime(tmp_path, provider, name, wire, path):
     calls = []
     def handler(request):
         calls.append(json.loads(request.content))
@@ -498,7 +501,7 @@ async def test_yam_agent_example_routes_every_llm(tmp_path):
     from colosseum_policy_server.backends.auto import AutoBackend
     cfg = RuntimeConfig.from_yaml(Path(__file__).parents[1] / 'configs/local-runtime-yam-agent.yaml.example')
     assert {m.name for m in cfg.models.values()} == {'grok-4.7', 'claude-opus-5-5', 'claude-fable-5-2',
-                                                      'gpt-6-astra'}
+                                                      'gpt-6-astra', 'gemini-4-hydrogen'}
     backend = AutoBackend({'llm': yam_options(tmp_path)})
     for item in cfg.models.values():
         await backend.start_session(item, {'run_id': 'config', 'api_key': 'test', 'robot_type': 'yam'})
